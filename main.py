@@ -2,11 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib as mpl
 
-# [ p(j, k, n+1) - 2p(j, k, n) + p(j, k, n-1) ] / dt²
-# [ p(j+1, k, n) - 2p(j, k, n) + p(j-1, k, n) ] / dx²
-# [ p(j, k+1, n) - 2p(j, k, n) + p(j, k-1, n) ] / dz²
-# c(j, k) ** 2
-# s(j, k, n)
 
 # CFL = c * (dt/dx)
 
@@ -39,6 +34,10 @@ for it in range(nt):
 # src[it] -> função do source time scaled pelo incremento da grid
 # nesse caso c é constante.
 
+def lap(x, z):
+    # calcular laplaciano aqui
+    pass
+
 x_max = 10
 nx = 100
 dx = x_max / nx  # dx = x_max / (nx - 1)
@@ -56,10 +55,30 @@ p = np.zeros((nx, nz))
 p_old = np.zeros((nx, nz))
 p_new = np.zeros((nx, nz))
 
+d2_p_xz = np.zeros((nx, nz))
+
 c0 = 334.0
 
 c = np.zeros((nx, nz))
 c = c + c0
+
+
+
+# [ p(j, k, n+1) - 2p(j, k, n) + p(j, k, n-1) ] / dt²
+# [ p(j+1, k, n) - 2p(j, k, n) + p(j-1, k, n) ] / dx²
+# [ p(j, k+1, n) - 2p(j, k, n) + p(j, k-1, n) ] / dz²
+# c(j, k) ** 2
+# s(j, k, n)
+
+for n in range(nt):
+
+    for j in range(1, nx-1):
+        for k in range(1, nz-1):
+            #d2_p_xz[j, k] = 
+            pass
+
+
+
 
 '''
 
