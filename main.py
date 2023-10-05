@@ -2,109 +2,29 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib as mpl
 
-
-# CFL = c * (dt/dx)
-
-# c < 0.5
-
-"""
-
-# Time extrapolation
-for it in range(nt):
-
-    # calculate partial derivatives (omit boundaries)
-    for i in range(1, nx - 1):
-        d2p[i] = (p[i + 1] - 2 * p[i]\
-        + p[i - 1]) / dx ** 2
-
-    # Time extrapolation
-    pnew = 2 * p - pold + dt ** 2 * c ** 2 * d2p
-
-    # Add source term at isrc
-    pnew[isrc] = pnew[isrc] + dt ** 2 * src[it] / dx
-
-    # Remap time levels
-    pold, p = p, pnew
-
-"""
-
-# nt -> número máximo de time steps
-# nx -> número de grid point para x
-# isrc -> ponto da grid onde foi injetado o source
-# src[it] -> função do source time scaled pelo incremento da grid
-# nesse caso c é constante.
-
-def lap(x, z):
-    # calcular laplaciano aqui
-    pass
-
-x_max = 10
-nx = 100
-dx = x_max / nx  # dx = x_max / (nx - 1)
-
-z_max = 10
-nz = 100
-dz = z_max / nz  # dz = z_max / (nz - 1)
-
-i_src = (int(nx/2), int(nz/2))
-
-nt = 1000
-dt = 0.0010
-
-p = np.zeros((nx, nz))
-p_old = np.zeros((nx, nz))
-p_new = np.zeros((nx, nz))
-
-d2_p_xz = np.zeros((nx, nz))
-
-c0 = 334.0
-
-c = np.zeros((nx, nz))
-c = c + c0
+# dz = dx (change it later to work on a not regular grid!)
 
 
-
-# [ p(j, k, n+1) - 2p(j, k, n) + p(j, k, n-1) ] / dt²
-# [ p(j+1, k, n) - 2p(j, k, n) + p(j-1, k, n) ] / dx²
-# [ p(j, k+1, n) - 2p(j, k, n) + p(j, k-1, n) ] / dz²
-# c(j, k) ** 2
-# s(j, k, n)
-
-for n in range(nt):
-
-    for j in range(1, nx-1):
-        for k in range(1, nz-1):
-            #d2_p_xz[j, k] = 
-            pass
+def laplacian(x, z, dx, P):
+    return (P[x + 1, z] + P[x - 1, z] + P[z + 1, x] + P[z - 1, x] - 4 * P[x, z]) / (dx ** 2)
 
 
+x_grid_size = 500
+z_grid_size = x_grid_size
+delta_x = 1
+delta_z = delta_x
 
+total_time_steps = 500
+delta_time = 0.0010
 
-'''
+p_present = np.zeros((x_grid_size, z_grid_size))
+p_past = np.zeros((x_grid_size, z_grid_size))
+p_future = np.zeros((x_grid_size, z_grid_size))
 
-# 1D Wave Propagation (Finite Difference Solution) 
-# ------------------------------------------------
+c = 1  # temporario
 
-# Loop over time
-for it in range(nt):
-
-    # 2nd derivative in space
-    for i in range(1, nx - 1):
-        d2px[i] = (p[i + 1] - 2 * p[i] + p[i - 1]) / dx ** 2
-
-
-    # Time Extrapolation
-    # ------------------
-    pnew = 2 * p - pold + c ** 2 * dt ** 2 * d2px
-
-    # Add Source Term at isrc
-    # -----------------------
-    # Absolute pressure w.r.t analytical solution
-    pnew[isrc] = pnew[isrc] + src[it] / (dx) * dt ** 2
-    
-            
-    # Remap Time Levels
-    # -----------------
-    pold, p = p, pnew
-
-'''
+for t in range(total_time_steps):
+    for x in range(x_grid_size):
+        for z in range(z_grid_size):
+            p_future[x, z] = (c ** 2) * laplacian(x, z, delta_x, p_present) * \
+                (delta_time ** 2) + 2 * p_present[x, z] - p_past[x, z]
