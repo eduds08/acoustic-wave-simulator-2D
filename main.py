@@ -56,12 +56,12 @@ for t in range(total_time_steps):
 
     p_future[source_x, source_z] += source[t]
 
-    plt.imsave(f"imagens/image_filename{t}.png", p_future)
+    plt.imsave(f"images/plot_{t}.png", p_future)
 
 frames = []
 imgs = []
 for t in range(total_time_steps):
-    imgs.append(f"imagens/image_filename{t}.png")
+    imgs.append(f"images/plot_{t}.png")
 for i in imgs:
     new_frame = Image.open(i)
     frames.append(new_frame)
