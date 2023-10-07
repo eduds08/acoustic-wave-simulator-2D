@@ -3,19 +3,38 @@ import numpy as np
 from scipy.ndimage import laplace
 from PIL import Image
 
+import glob
+import cv2
+
 # def laplacian(x, z, dx, P):
 #     return (P[x + 1, z] + P[x - 1, z] + P[x, z + 1] + P[x, z - 1] - 4 * P[x, z]) / (dx ** 2)
 
 
 def create_gif(total_time):
-    imgs = []
+    images = []
     for t in range(total_time):
-        imgs.append(Image.open(f"images/plot_{t}.png"))
+        images.append(Image.open(f"images/plot_{t}.png"))
 
-    imgs[0].save('simulation.gif', format='GIF',
-                 append_images=imgs[1:],
-                 save_all=True,
-                 duration=50, loop=0)
+    images[0].save('simulation.gif', format='GIF',
+                   append_images=images[1:],
+                   save_all=True,
+                   duration=50, loop=0)
+
+
+def create_video(total_time):
+    images = []
+    for t in range(total_time):
+        img = cv2.imread(f"images/plot_{t}.png")
+        height, width, layers = img.shape
+        size = (width, height)
+        images.append(img)
+
+    out = cv2.VideoWriter(
+        'project.avi', cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
+
+    for i in range(len(images)):
+        out.write(images[i])
+    out.release()
 
 
 x_grid_size = 500
@@ -23,7 +42,7 @@ z_grid_size = x_grid_size
 delta_x = 1
 delta_z = delta_x
 
-total_time_steps = 1000
+total_time_steps = 1500
 delta_time = 0.001
 
 source_x = int(x_grid_size / 2)
@@ -89,4 +108,6 @@ for t in range(total_time_steps):
 
     plt.imsave(f"images/plot_{t}.png", p_future)
 
-create_gif(total_time_steps)
+# create_gif(total_time_steps)
+
+create_video(total_time_steps)
