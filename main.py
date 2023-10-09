@@ -43,7 +43,7 @@ def create_gif_and_video(total_time):
                            duration=50, loop=0)
 
 
-grid_size_x = 700
+grid_size_x = 300
 grid_size_z = grid_size_x
 dx = 1
 dz = dx
@@ -85,6 +85,21 @@ for t in range(total_time):
     p_future = (c ** 2) * laplacian_5_operator(grid_size_z,
                                                grid_size_x, dz, dx, p_present) * (dt ** 2)
     p_future += 2 * p_present - p_past
+
+    # ABORSÇÃO PARA 5 OPERADORES:
+    p_future[1, :] = p_present[2, :] + \
+        ((cfl - 1) / (cfl + 1)) * (p_future[2, :] - p_present[1, :])
+
+    p_future[grid_size_z - 2, :] = p_present[grid_size_z - 3, :] + \
+        ((cfl - 1) / (cfl + 1)) * \
+        (p_future[grid_size_z - 3, :] - p_present[grid_size_z - 2, :])
+
+    p_future[:, 1] = p_present[:, 2] + \
+        ((cfl - 1) / (cfl + 1)) * (p_future[:, 2] - p_present[:, 1])
+
+    p_future[:, grid_size_x - 2] = p_present[:, grid_size_x - 3] + \
+        ((cfl - 1) / (cfl + 1)) * \
+        (p_future[:, grid_size_x - 3] - p_present[:, grid_size_x - 2])
 
     p_future[0, :] = p_present[1, :] + \
         ((cfl - 1) / (cfl + 1)) * (p_future[1, :] - p_present[0, :])
