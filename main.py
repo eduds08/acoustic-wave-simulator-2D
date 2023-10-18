@@ -81,39 +81,11 @@ c += c0
 
 for t in range(total_time):
 
+    # You can uncomment the next line and comment the other one (with 5-operator-laplace) if you want to use the scipy laplace instead of the one i've defined
     # p_future = (c ** 2) * laplace(p_present) * (dt ** 2)
     p_future = (c ** 2) * laplacian_5_operator(grid_size_z,
                                                grid_size_x, dz, dx, p_present) * (dt ** 2)
     p_future += 2 * p_present - p_past
-
-    # ABORSÇÃO PARA 5 OPERADORES:
-    p_future[1, :] = p_present[2, :] + \
-        ((cfl - 1) / (cfl + 1)) * (p_future[2, :] - p_present[1, :])
-
-    p_future[grid_size_z - 2, :] = p_present[grid_size_z - 3, :] + \
-        ((cfl - 1) / (cfl + 1)) * \
-        (p_future[grid_size_z - 3, :] - p_present[grid_size_z - 2, :])
-
-    p_future[:, 1] = p_present[:, 2] + \
-        ((cfl - 1) / (cfl + 1)) * (p_future[:, 2] - p_present[:, 1])
-
-    p_future[:, grid_size_x - 2] = p_present[:, grid_size_x - 3] + \
-        ((cfl - 1) / (cfl + 1)) * \
-        (p_future[:, grid_size_x - 3] - p_present[:, grid_size_x - 2])
-
-    p_future[0, :] = p_present[1, :] + \
-        ((cfl - 1) / (cfl + 1)) * (p_future[1, :] - p_present[0, :])
-
-    p_future[grid_size_z - 1, :] = p_present[grid_size_z - 2, :] + \
-        ((cfl - 1) / (cfl + 1)) * \
-        (p_future[grid_size_z - 2, :] - p_present[grid_size_z - 1, :])
-
-    p_future[:, 0] = p_present[:, 1] + \
-        ((cfl - 1) / (cfl + 1)) * (p_future[:, 1] - p_present[:, 0])
-
-    p_future[:, grid_size_x - 1] = p_present[:, grid_size_x - 2] + \
-        ((cfl - 1) / (cfl + 1)) * \
-        (p_future[:, grid_size_x - 2] - p_present[:, grid_size_x - 1])
 
     p_past = p_present
     p_present = p_future
